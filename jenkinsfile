@@ -1,77 +1,74 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the repository
-                checkout scm
-            }
-        }
+  tools {
+    git    'Default'    // your auto-installed Git tool
+    nodejs 'Node_18'    // your NodeJS install
+  }
 
-        stage('Build') {
-            steps {
-                echo 'Building the application...'
-                // TODO: replace with your build command, e.g. sh 'npm install' or sh 'mvn clean package'
-            }
-        }
+  triggers {
+    pollSCM('H/5 * * * *')   // poll for changes every 5 minutes
+  }
 
-        stage('Unit & Integration Tests') {
-            steps {
-                echo 'Running unit & integration tests...'
-                // TODO: replace with your test commands, e.g. sh 'npm test' or sh 'mvn test'
-            }
-        }
-
-        stage('Code Analysis') {
-            steps {
-                echo 'Performing static code analysis...'
-                // TODO: replace with your code analysis command, e.g. sh 'npm run lint' or withSonarQubeEnv('SonarQube') { sh 'mvn sonar:sonar' }
-            }
-        }
-
-        stage('Security Scan') {
-            steps {
-                echo 'Scanning for vulnerabilities...'
-                // TODO: replace with your security scan command, e.g. sh 'npm audit --audit-level=high' or sh 'dependency-check --project your-project --scan .'
-            }
-        }
-
-        stage('Deploy to Staging') {
-            steps {
-                echo 'Deploying to staging environment...'
-                // TODO: replace with your staging deployment command, e.g. sh 'npm run deploy:staging' or ansible-playbook -i inventory/staging deploy.yml
-            }
-        }
-
-        stage('Integration Tests on Staging') {
-            steps {
-                echo 'Running integration tests on staging...'
-                // TODO: replace with your integration test command, e.g. sh 'npm run test:e2e' or newman run collection.json -e env/staging.json
-            }
-        }
-
-        stage('Deploy to Production') {
-            steps {
-                // Manual approval before production rollout
-                input message: 'Approve deployment to Production?', ok: 'Deploy'
-                echo 'Deploying to production environment...'
-                // TODO: replace with your production deployment command, e.g. sh 'npm run deploy:prod' or ansible-playbook -i inventory/production deploy.yml
-            }
-        }
+  stages {
+    stage('Debug workspace') {
+      steps {
+        bat 'echo CURRENT DIR: %CD%'
+        bat 'dir /B'
+      }
     }
 
-    post {
-        always {
-            echo 'Archiving results and cleaning up...'
-            // TODO: adjust test report path as needed
-            junit '**/target/surefire-reports/*.xml'
-        }
-        success {
-            echo 'Pipeline completed successfully.'
-        }
-        failure {
-            echo 'Pipeline failed. Please check the logs.'
-        }
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
     }
+
+    stage('Install Dependencies') {
+      steps {
+        // Adjust folder name to match where package.json now lives
+        dir('jenkinsfile') {
+          bat 'npm install'
+        }
+      }
+    }
+
+    stage('Unit & Integration Tests') {
+      steps {
+        dir('jenkinsfile') {
+          bat 'npm test'
+        }
+      }
+    }
+
+    stage('Static Code Analysis') {
+      steps {
+        echo 'Skipping Static Code Analysis'
+      }
+    }
+
+    stage('Security Scan') {
+      steps {
+        echo 'Skipping Security Scan'
+      }
+    }
+
+    stage('Deploy to Staging') {
+      steps {
+        echo 'Skipping Deploy to Staging'
+      }
+    }
+
+    stage('Email Notification') {
+      steps {
+        echo 'Skipping Email Notification'
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Build ${currentBuild.fullDisplayName} finished with status ${currentBuild.currentResult}"
+    }
+  }
 }
