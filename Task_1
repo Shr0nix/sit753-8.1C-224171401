@@ -2,15 +2,24 @@ pipeline {
   agent any
 
   tools {
-    git    'Default'
-    nodejs 'Node_18'
+    git    'Default'    // your auto-installed Git tool
+    nodejs 'Node_18'    // your NodeJS install
   }
 
   triggers {
-    pollSCM('H/2 * * * *')
+    pollSCM('H/5 * * * *')  // poll for changes every 5 minutes
   }
 
   stages {
+    stage('Debug workspace') {
+      steps {
+        bat 'echo === CURRENT DIR ==='
+        bat 'echo %CD%'
+        bat 'echo === ROOT FILES & FOLDERS ==='
+        bat 'dir /B'
+      }
+    }
+
     stage('Checkout') {
       steps {
         checkout scm
@@ -19,7 +28,7 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        // go into the Task_1 folder where your package.json really lives
+        // adjust 'Task_1' if your folder name is different
         dir('Task_1') {
           bat 'npm install'
         }
@@ -34,6 +43,36 @@ pipeline {
       }
     }
 
-    // …the rest of your stages…
+    // ─── Optional/Placeholder Stages ─────────────────────────────
+
+    stage('Static Code Analysis') {
+      steps {
+        // e.g. dir('Task_1') { bat 'npm run lint' }
+      }
+    }
+
+    stage('Security Scan') {
+      steps {
+        // e.g. dir('Task_1') { bat 'npm audit' }
+      }
+    }
+
+    stage('Deploy to Staging') {
+      steps {
+        // your deploy commands here
+      }
+    }
+
+    stage('Email Notification') {
+      steps {
+        // you’ll add your emailext {} here
+      }
+    }
+  }
+
+  post {
+    always {
+      echo "Build ${currentBuild.fullDisplayName} finished with status ${currentBuild.currentResult}"
+    }
   }
 }
