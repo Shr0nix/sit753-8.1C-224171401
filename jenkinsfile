@@ -3,53 +3,58 @@ pipeline {
 
   // Poll GitHub every 5 minutes for new commits
   triggers {
-    pollSCM('H/5 * * * *')
+    pollSCM('H/2 * * * *')
   }
 
   stages {
     stage('Build') {
       steps {
-        // Stage 1: compile/package code
-        echo 'Build – using Maven to compile and package the code' 
+        echo 'Build – using Maven to compile and package the code'
       }
     }
 
     stage('Unit & Integration Tests') {
       steps {
-        // Stage 2: run tests
         echo 'Unit and Integration Tests – using JUnit for unit tests and TestNG for integration tests'
       }
     }
 
     stage('Code Analysis') {
       steps {
-        // Stage 3: static analysis
-        echo 'Code Analysis – using SonarQube Scanner to analyse code quality' 
+        echo 'Code Analysis – using SonarQube Scanner to analyse code quality'
       }
     }
 
     stage('Security Scan') {
       steps {
-        // Stage 4: vulnerability scanning
-        echo 'Security Scan – using OWASP ZAP to identify security issues' 
+        echo 'Security Scan – using OWASP ZAP to identify security issues'
       }
     }
 
     stage('Deploy to Staging') {
       steps {
-        // Stage 5: deploy
         echo 'Deploy to Staging – using AWS CLI to push artifacts to a staging EC2 instance'
       }
     }
 
     stage('Integration Tests on Staging') {
       steps {
-        // Stage 6: e2e tests
         echo 'Staging Integration Tests – using Selenium WebDriver to run end-to-end tests'
       }
     }
 
+    stage('Deploy to Production') {
+      steps {
+        echo 'Deploy to Production – using Terraform to provision and deploy to production'
+      }
+    }
 
+    stage('Archive Artifacts') {
+      steps {
+        echo 'Archive Artifacts – using Jenkins archiveArtifacts to retain build outputs'
+      }
+    }
+  }
 
   post {
     always {
