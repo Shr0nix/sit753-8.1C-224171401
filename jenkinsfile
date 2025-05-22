@@ -2,12 +2,12 @@ pipeline {
   agent any
 
   tools {
-    git    'Default'    // your auto-installed Git tool
-    nodejs 'Node_18'    // your NodeJS install
+    git    'Default'
+    nodejs 'Node_18'
   }
 
   triggers {
-    pollSCM('H/5 * * * *')   // poll for changes every 5 minutes
+    pollSCM('H/5 * * * *')
   }
 
   stages {
@@ -26,18 +26,14 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        // Adjust folder name to match where package.json now lives
-        dir('jenkinsfile') {
-          bat 'npm install'
-        }
+        // Ensure package.json is at the root of your repo
+        bat 'npm install'
       }
     }
 
     stage('Unit & Integration Tests') {
       steps {
-        dir('jenkinsfile') {
-          bat 'npm test'
-        }
+        bat 'npm test'
       }
     }
 
