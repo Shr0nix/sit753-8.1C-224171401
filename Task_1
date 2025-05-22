@@ -2,12 +2,12 @@ pipeline {
   agent any
 
   tools {
-    git    'Default'    // your auto-installed Git tool
-    nodejs 'Node_18'    // your NodeJS install
+    git    'Default'     // your auto-installed Git tool
+    nodejs 'Node_18'     // your NodeJS install
   }
 
   triggers {
-    pollSCM('H/2 * * * *')  // poll for changes every 5 minutes
+    pollSCM('H/5 * * * *')
   }
 
   stages {
@@ -28,7 +28,6 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        // adjust 'Task_1' if your folder name is different
         dir('Task_1') {
           bat 'npm install'
         }
@@ -43,29 +42,27 @@ pipeline {
       }
     }
 
-    // ─── Optional/Placeholder Stages ─────────────────────────────
-
     stage('Static Code Analysis') {
       steps {
-        // e.g. dir('Task_1') { bat 'npm run lint' }
+        echo 'Skipping Static Code Analysis (no lint step configured)'
       }
     }
 
     stage('Security Scan') {
       steps {
-        // e.g. dir('Task_1') { bat 'npm audit' }
+        echo 'Skipping Security Scan (no audit step configured)'
       }
     }
 
     stage('Deploy to Staging') {
       steps {
-        // your deploy commands here
+        echo 'Skipping Deploy to Staging (not implemented yet)'
       }
     }
 
     stage('Email Notification') {
       steps {
-        // you’ll add your emailext {} here
+        echo 'Skipping Email Notification (to be added later)'
       }
     }
   }
