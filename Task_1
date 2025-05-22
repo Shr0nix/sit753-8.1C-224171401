@@ -1,0 +1,25 @@
+pipeline {
+  agent any
+  tools {
+    // must exactly match your Global Tool name
+    nodejs 'Node_18'
+  }
+  triggers {
+    // poll your repo every 5 minutes
+    pollSCM('H/5 * * * *')
+  }
+  stages {
+    stage('Checkout') {
+      steps {
+        // grab whatever’s in your GitHub repo
+        checkout scm
+      }
+    }
+    stage('Install Dependencies') {
+      steps {
+        bat 'npm install'
+      }
+    }
+    // (We’ll add your other stages—tests, analysis, deploy—next.)
+  }
+}
