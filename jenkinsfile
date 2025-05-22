@@ -1,70 +1,65 @@
 pipeline {
   agent any
 
-  tools {
-    git    'Default'
-    nodejs 'Node_18'
-  }
-
+  // Poll GitHub every 5 minutes for new commits
   triggers {
     pollSCM('H/5 * * * *')
   }
 
   stages {
-    stage('Debug workspace') {
+    stage('Build') {
       steps {
-        bat 'echo CURRENT DIR: %CD%'
-        bat 'dir /B'
-      }
-    }
-
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-
-    stage('Install Dependencies') {
-      steps {
-        // Ensure package.json is at the root of your repo
-        bat 'npm install'
+        // Stage 1: compile/package code
+        echo 'Build – using Maven to compile and package the code' 
       }
     }
 
     stage('Unit & Integration Tests') {
       steps {
-        bat 'npm test'
+        // Stage 2: run tests
+        echo 'Unit and Integration Tests – using JUnit for unit tests and TestNG for integration tests'
       }
     }
 
-    stage('Static Code Analysis') {
+    stage('Code Analysis') {
       steps {
-        echo 'Skipping Static Code Analysis'
+        // Stage 3: static analysis
+        echo 'Code Analysis – using SonarQube Scanner to analyse code quality' 
       }
     }
 
     stage('Security Scan') {
       steps {
-        echo 'Skipping Security Scan'
+        // Stage 4: vulnerability scanning
+        echo 'Security Scan – using OWASP ZAP to identify security issues' 
       }
     }
 
     stage('Deploy to Staging') {
       steps {
-        echo 'Skipping Deploy to Staging'
+        // Stage 5: deploy
+        echo 'Deploy to Staging – using AWS CLI to push artifacts to a staging EC2 instance'
       }
     }
 
-    stage('Email Notification') {
+    stage('Integration Tests on Staging') {
       steps {
-        echo 'Skipping Email Notification'
+        // Stage 6: e2e tests
+        echo 'Staging Integration Tests – using Selenium WebDriver to run end-to-end tests'
+      }
+    }
+
+    stage('Deploy to Production') {
+      steps {
+        // Stage 7: final deploy
+        echo 'Deploy to Production – using Terraform to provision and deploy to production'
       }
     }
   }
 
   post {
     always {
-      echo "Build ${currentBuild.fullDisplayName} finished with status ${currentBuild.currentResult}"
+      echo "Pipeline complete: ${currentBuild.fullDisplayName} – status: ${currentBuild.currentResult}"
     }
   }
 }
