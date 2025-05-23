@@ -1,7 +1,7 @@
 pipeline {
   agent any
 
-  // Poll GitHub every 5 minutes for new commits
+  // Poll the GitHub repo every 2 minutes for new commits
   triggers {
     pollSCM('H/2 * * * *')
   }
@@ -49,6 +49,7 @@ pipeline {
       }
     }
 
+    // Optional extra stage
     stage('Archive Artifacts') {
       steps {
         echo 'Archive Artifacts – using Jenkins archiveArtifacts to retain build outputs'
